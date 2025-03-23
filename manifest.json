@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "Utility"
+  ],
+  "dockerRepository": "talkops/timer",
+  "features": [
+    "Create a timer",
+    "Check timer states",
+    "Delete a timer"
+  ],
+  "icon": "https://cdn0.iconfinder.com/data/icons/corona-virus-6/48/15-512.png",
+  "installationSteps": [],
+  "name": "Timer",
+  "sdk": {
+    "name": "nodejs",
+    "version": "2.3.5"
+  },
+  "version": "1.0.0",
+  "website": null
+}
