@@ -6,7 +6,7 @@ import yaml from 'js-yaml'
 const extension = new Extension()
   .setName('Timer')
   .setDockerRepository('talkops/timer')
-  .setCategories(['Utility'])
+  .setCategory('Utility')
   .setIcon('https://cdn0.iconfinder.com/data/icons/corona-virus-6/48/15-512.png')
   .setVersion(pkg.version)
   .setFeatures(['Create a timer', 'Check timer states', 'Delete a timer'])
