@@ -5,6 +5,11 @@ A TalkOps Extension made to work with [TalkOps](https://talkops.app).
 
 **TalkOps enables real-time voice interaction with applications.**
 
+## Features
+
+* Create a timer
+* Check timer states
+* Delete a timer
 
 ## Installation
 
