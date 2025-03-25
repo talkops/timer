@@ -1,9 +1,8 @@
 {
-  "version": "1.0.0",
   "dependencies": {
     "js-yaml": "^4.1.0",
     "lowdb": "^7.0.1",
     "pretty-ms": "^9.2.0",
-    "talkops": "^2.3.0"
+    "talkops": "^2.5.0"
   }
 }

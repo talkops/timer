@@ -1,5 +1,4 @@
 # TalkOps Extension: Timer
-![Docker Pulls](https://img.shields.io/docker/pulls/talkops/timer)
 
 A TalkOps Extension made to work with [TalkOps](https://talkops.app).
 
