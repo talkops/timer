@@ -6,11 +6,11 @@
     "Delete a timer"
   ],
   "icon": "https://cdn0.iconfinder.com/data/icons/corona-virus-6/48/15-512.png",
-  "installationSteps": [],
   "name": "Timer",
   "sdk": {
     "name": "nodejs",
-    "version": "2.5.0"
+    "version": "2.6.0"
   },
+  "softwareVersion": null,
   "website": null
 }
