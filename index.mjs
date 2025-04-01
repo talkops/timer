@@ -4,7 +4,7 @@ import yaml from 'js-yaml'
 
 const extension = new Extension()
   .setName('Timer')
-  .setCategory('Utility')
+  .setCategory('utility')
   .setIcon('https://cdn0.iconfinder.com/data/icons/corona-virus-6/48/15-512.png')
   .setFeatures(['Create a timer', 'Check timer states', 'Delete a timer'])
 
