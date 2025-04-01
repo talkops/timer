@@ -1,5 +1,6 @@
 {
   "category": "utility",
+  "demo": false,
   "features": [
     "Create a timer",
     "Check timer states",
@@ -9,7 +10,7 @@
   "name": "Timer",
   "sdk": {
     "name": "nodejs",
-    "version": "2.6.0"
+    "version": "2.7.0"
   },
   "softwareVersion": null,
   "website": null
