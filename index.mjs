@@ -11,6 +11,7 @@ const extension = new Extension()
 const baseInstructions = `
 You can manage multiple timers.
 It is possible to add another timer for the same duration.
+Give the durations to the nearest second.
 `
 
 import timersModel from './schemas/models/timers.json' with { type: 'json' }
@@ -82,12 +83,9 @@ setInterval(() => {
   for (const timer of getTimers()) {
     if (timer.completeAt > now) continue
     removeTimer(timer)
-    service.send([
-      new Alarm().setFrom(extension.name).addTo(timer.clientId),
-      new Notification()
-        .setFrom(extension.name)
-        .addTo(timer.clientId)
-        .setText(`The timer ${timer.number} is complete.`),
+    extension.send([
+      new Alarm(),
+      new Notification().setText(`The timer ${timer.number} is complete.`),
     ])
   }
 }, 1000)
