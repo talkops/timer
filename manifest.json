@@ -10,7 +10,7 @@
   "name": "Timer",
   "sdk": {
     "name": "nodejs",
-    "version": "2.11.3"
+    "version": "2.12.0"
   },
   "softwareVersion": null,
   "website": null

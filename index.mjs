@@ -1,4 +1,4 @@
-import { Alarm, Extension, Message } from 'talkops'
+import { Extension } from 'talkops'
 import prettyMilliseconds from 'pretty-ms'
 import yaml from 'js-yaml'
 
@@ -83,6 +83,7 @@ setInterval(() => {
   for (const timer of getTimers()) {
     if (timer.completeAt > now) continue
     removeTimer(timer)
-    extension.send([new Alarm(), new Message().setText(`The timer ${timer.number} is complete.`)])
+    extension.enableAlarm()
+    extension.sendMessage(`The timer ${timer.number} is complete.`)
   }
 }, 1000)
