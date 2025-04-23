@@ -1,6 +1,9 @@
 import { Extension } from 'talkops'
+import { JSONFilePreset } from 'lowdb/node'
 import prettyMilliseconds from 'pretty-ms'
 import yaml from 'js-yaml'
+
+const db = await JSONFilePreset('/data/db.json', { timers: [] })
 
 const extension = new Extension()
   .setName('Timer')
@@ -8,35 +11,78 @@ const extension = new Extension()
   .setIcon('https://talkops.app/images/extensions/timer.png')
   .setFeatures(['Create a timer', 'Check timer states', 'Delete a timer'])
 
-const baseInstructions = `
+const instructions = []
+instructions.push('``` yaml')
+instructions.push(`
 You can manage multiple timers.
 It is possible to add another timer for the same duration.
 Give the durations to the nearest second.
-`
-
-import timersModel from './schemas/models/timers.json' with { type: 'json' }
-
-const instructions = [baseInstructions]
-instructions.push('``` yaml')
-instructions.push(yaml.dump({ timersModel }))
+`)
+instructions.push(
+  yaml.dump({
+    timers: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          number: {
+            type: 'integer',
+            description: 'The number of the timer.',
+          },
+          duration: {
+            type: 'string',
+            description: 'The duration of the timer.',
+          },
+          timeleft: {
+            type: 'string',
+            description: 'The time left of the timer.',
+          },
+        },
+      },
+    },
+  }),
+)
 instructions.push('```')
 extension.setInstructions(instructions.join('\n'))
 
-import create_timer from './schemas/functions/create_timer.json' with { type: 'json' }
-import get_timers from './schemas/functions/get_timers.json' with { type: 'json' }
-import delete_timer from './schemas/functions/delete_timer.json' with { type: 'json' }
+extension.setFunctionSchemas([
+  {
+    name: 'create_timer',
+    description: 'Create a timer.',
+    parameters: {
+      type: 'object',
+      properties: {
+        duration: {
+          type: 'integer',
+          description: 'The duration of the timer in seconds.',
+        },
+      },
+      required: ['duration'],
+    },
+  },
+  {
+    name: 'get_timers',
+    description: 'Get timers.',
+  },
+  {
+    name: 'delete_timer',
+    description: 'Cancel a timer.',
+    parameters: {
+      type: 'object',
+      properties: {
+        number: {
+          type: 'integer',
+          description: 'The number of the timer.',
+        },
+      },
+      required: ['number'],
+    },
+  },
+])
 
-extension.setFunctionSchemas([create_timer, get_timers, delete_timer])
-
-import { addTimer, removeTimer, getTimers } from './db.js'
-
-function getClientTimers(clientId) {
-  return getTimers().filter((timer) => timer.clientId === clientId)
-}
-
-function getNextClientTimerNumber(clientId) {
+function getNextTimerNumber() {
   let number = 1
-  for (const timer of getClientTimers(clientId)) {
+  for (const timer of db.data.timers) {
     if (timer.number < number) continue
     number = timer.number + 1
   }
@@ -44,17 +90,17 @@ function getNextClientTimerNumber(clientId) {
 }
 
 extension.setFunctions([
-  function create_timer(duration, clientId) {
+  function create_timer(duration) {
     duration = duration * 1000
-    const number = getNextClientTimerNumber(clientId)
+    const number = getNextTimerNumber()
     const createdAt = new Date().getTime()
     const completeAt = createdAt + duration
-    addTimer({ number, createdAt, completeAt, duration, clientId })
-    return `The timer ${number} has been created.`
+    db.update(({ timers }) => timers.push({ number, createdAt, completeAt, duration }))
+    return `Timer #${number} has been created.`
   },
-  function get_timers(clientId) {
+  function get_timers() {
     return yaml.dump(
-      getClientTimers(clientId).map((timer) => {
+      db.data.timers.map((timer) => {
         return {
           number: timer.number,
           duration: prettyMilliseconds(timer.duration, {
@@ -68,11 +114,12 @@ extension.setFunctions([
       }),
     )
   },
-  function delete_timer(number, clientId) {
-    for (const timer of getClientTimers(clientId)) {
+  function delete_timer(number) {
+    for (const timer of db.data.timers) {
       if (timer.number !== number) continue
-      removeTimer(timer)
-      return `The timer ${number} has been deleted.`
+      db.data.timers = db.data.timers.filter((t) => t !== timer)
+      db.write()
+      return `Timer #${number} has been deleted.`
     }
     return 'Not found.'
   },
@@ -80,10 +127,11 @@ extension.setFunctions([
 
 setInterval(() => {
   const now = new Date().getTime()
-  for (const timer of getTimers()) {
+  for (const timer of db.data.timers) {
     if (timer.completeAt > now) continue
-    removeTimer(timer)
+    db.data.timers = db.data.timers.filter((t) => t !== timer)
+    db.write()
     extension.enableAlarm()
-    extension.sendMessage(`The timer ${timer.number} is complete.`)
+    extension.sendMessage(`Timer #${timer.number} is complete.`)
   }
 }, 1000)
