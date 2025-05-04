@@ -10,6 +10,7 @@ const extension = new Extension()
   .setCategory('utility')
   .setIcon('https://talkops.app/images/extensions/timer.png')
   .setFeatures(['Create a timer', 'Check timer states', 'Delete a timer'])
+  .start()
 
 const instructions = []
 instructions.push('``` yaml')
