@@ -132,6 +132,7 @@ setInterval(() => {
     if (timer.completeAt > now) continue
     db.data.timers = db.data.timers.filter((t) => t !== timer)
     db.write()
+    if (!extension.isEnabled()) continue
     extension.enableAlarm()
     extension.sendMessage(`Timer #${timer.number} is complete.`)
   }
